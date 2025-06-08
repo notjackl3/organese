@@ -11,12 +11,12 @@
   
 
 .hover-highlight:hover {
-    background-color: #9A616D;
+    background-color: #ffa79f;
     color: white !important;
     transition: 0.1s;
 }
 
 .dropdown-item:hover {
-    background-color: #9A616D !important; /* Change to your desired color */
+    background-color: #ffa79f !important; /* Change to your desired color */
     color: white !important;              /* Optional: change text color */
 }

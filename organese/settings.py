@@ -108,11 +108,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-# ]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
-# During deployment (e.g., collectstatic)
+# During deployment (e.g., collectstatic), STATIC_ROOT is useless during development
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
