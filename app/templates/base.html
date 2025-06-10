@@ -20,7 +20,6 @@
     <nav class="navbar navbar-expand-md navbar-light shadow bg-light">
         <a class="ms-4 navbar-brand" href="#"> Organese </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <!-- <span class="navbar-toggler-icon"></span> -->
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
@@ -54,5 +53,7 @@
     {% block content %}{% endblock %}
 
     <script src="{% static 'app-utils.js' %}"></script>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>
