@@ -78,23 +78,25 @@ class TimetableEntryLookup(APIView):
     def post(self, request):
         day = request.data.get('day_of_week')
         hour = request.data.get('hour')
-        content = request.data.get('content')
-        print(day)
-        print(hour)
-        print(content)
-        # ERROR HERE IS MULTIPLE OBJECT BEING RETURN, HAVE TO FIX THAT AND ALSO ALLOWS USER TO ONLY INPUT ONCE. ALSO, TRY TO PREVENT ROWS WITH NULL CONTENT TO SAVE DATA
         try:
             entry = TimetableEntry.objects.get(
                 day_of_week=day,
                 hour=hour,
-                content=content
+                user_id = request.user.id
             )
             return Response({"pk": entry.pk}, status=status.HTTP_200_OK)
         except TimetableEntry.DoesNotExist:
             return Response({"error": "No entry found."}, status=status.HTTP_404_NOT_FOUND)
+        except TimetableEntry.MultipleObjectsReturned:
+            entries = TimetableEntry.objects.filter(
+                day_of_week=day, 
+                hour=hour, 
+                user_id = request.user.id)
+            print(entries.values())
+            return Response({"multiple": True, "pk": entries.values()}, status=status.HTTP_200_OK)
         
 
 @login_required
 def home(request):
-    return render(request, "index.html", {"days": DAYS})
+    return render(request, "calendar.html", {"days": DAYS})
 

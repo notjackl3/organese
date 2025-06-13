@@ -1,8 +1,10 @@
 from django.urls import path, include
+from django.views.generic import RedirectView
 from . import views
 
 urlpatterns = [
-    path("", views.home, name="home"),
+    path('', RedirectView.as_view(url='calendar/', permanent=False)),
+    path("calendar/", views.home, name="home"),
     # GET, POST
     path('entries/', views.TimetableEntryList.as_view(), name='entry-list'),
     # GET, PUT, PATCH, DELETE

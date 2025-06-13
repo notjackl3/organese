@@ -14,7 +14,7 @@ class TimetableEntry(models.Model):
         ("Sunday", "Sunday"),
     ])
     hour = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
-    content = models.TextField(blank=True)
+    content = models.TextField(blank=True, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -5,19 +5,24 @@
     transition: all 0.2s ease-out;
 }
 
+:root {
+    --main-color: #ffa79f;
+    --extra-color: #e65976;
+}
+
 .nav-link:focus {
     outline: none;
   }
   
 
 .hover-highlight:hover {
-    background-color: #ffa79f;
+    background-color: var(--main-color);
     color: white !important;
     transition: 0.1s;
 }
 
 .dropdown-item:hover {
-    background-color: #ffa79f !important; /* Change to your desired color */
+    background-color: var(--extra-color) !important; /* Change to your desired color */
     color: white !important;              /* Optional: change text color */
 }
 
@@ -39,7 +44,7 @@
 }
 
 .time-item.hoverable:hover {
-    background-color: #ffa79f !important;
+    background-color: var(--main-color) !important;
 }
 
 .overlay {
@@ -64,4 +69,26 @@
     border: 0;
     line-height: 1.75;
     font-size: 0.75rem;
+}
+
+.btn-secondary {
+    background-color: var(--main-color) !important;
+}
+
+.btn-secondary:hover {
+    background-color: var(--extra-color) !important;
+}
+
+.btn-generate {
+    margin-top: 1rem;
+    padding: 0.5rem;
+
+    border: solid white 2px;
+    color: white;
+    background-color: var(--main-color);
+    font-size: larger;
+}
+
+.btn-generate:hover {
+    background-color: var(--extra-color);
 }
