@@ -46,20 +46,33 @@
             </div>
         </div>
     </div>
-    
-    <button type="button" class="btn-generate">Generate Schedule</button>
-
+    {% if not is_guest %}
+    <div class="container">
+        <div class="d-flex align-items-top justify-content-center pt-3 gap-3">
+            <div class="form-switch m-0 make-public btn-white-edges toggle">
+                <input class="form-check-input" type="checkbox" id="public-toggle" name="is_public"
+                    {% if user.settings.is_public %}checked{% endif %}>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <label class="form-check-label ms-2" for="public-toggle">Make Public</label>
+                </div>
+            </div>
+            <button type="button" class="btn-white-edges" id="copy-link-btn" data-username="{{ username }}">Copy Calendar Guest Link</button>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script defer src="{% static 'app-interactions.js' %}"></script>
+<script defer src="{% static 'app-timetable.js' %}"></script>
     {% if is_guest %}
     <body data-username="{{ username }}">
         <script defer src="{% static 'app-guests.js' %}"></script>
     </body>
     {% else %}
-        <script defer src="{% static 'app-setup.js' %}"></script>
+        <body data-toggle="{% url 'update_settings' %}">
+            <script defer src="{% static 'app-setup.js' %}"></script>
+        </body>
     {% endif %}
-    <script defer src="{% static 'app-interactions.js' %}"></script>
-    <script defer src="{% static 'app-timetable.js' %}"></script>
 {% endblock %}

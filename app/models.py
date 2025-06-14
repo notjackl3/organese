@@ -39,3 +39,10 @@ class BookingRequest(models.Model):
     content = models.TextField(blank=True, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="settings")
+    is_public = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}'s settings"

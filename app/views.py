@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, permissions
-from .models import TimetableEntry
+from .models import TimetableEntry, UserSettings, BookingRequest
 from .serializers import TimetableEntrySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -79,6 +79,7 @@ class TimetableEntryLookup(APIView):
     def post(self, request):
         day = request.data.get('day_of_week')
         hour = request.data.get('hour')
+        print("this runs")
         try:
             entry = TimetableEntry.objects.get(
                 day_of_week=day,
@@ -98,26 +99,37 @@ class TimetableEntryLookup(APIView):
         
 
 @api_view(["GET"])
-def public_entries(request, username):
+def entries_by_username(request, username):
     try:
         user = User.objects.get(username=username)
+        settings = UserSettings.objects.get(user=user)
+
+        if not settings.is_public:
+            return Response({"error": "This user's schedule is private."}, status=403)
+
         entries = TimetableEntry.objects.filter(user=user)
-        serialized = [
-            {
-                "day_of_week": entry.day_of_week,
-                "hour": entry.hour,
-                "content": entry.content,
-            }
-            for entry in entries
-        ]
-        return Response(serialized)
+        serializer = TimetableEntrySerializer(entries, many=True)
+        return Response(serializer.data)
+
     except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)
+        return Response({"error": "User not found."}, status=404)
     
 
 @login_required
 def calendar(request):
-    return render(request, "calendar.html", {"days": DAYS})
+    username = request.user.username
+    settings = UserSettings.objects.get(user=request.user)
+    return render(request, "calendar.html", {"days": DAYS, "username": username, "settings": settings})
+
+
+@login_required
+def update_settings(request):
+    settings = UserSettings.objects.get(user=request.user)
+    if request.method == "POST":
+        toggle_value = (request.POST.get("is_public", "off") == "on")
+        settings.is_public = toggle_value
+        settings.save()
+        return redirect("calendar")
 
 
 def calendar_guest(request, user):
