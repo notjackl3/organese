@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.shortcuts import get_object_or_404
-
+from django.contrib.auth.models import User
+from rest_framework.decorators import api_view
 
 
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -96,7 +97,30 @@ class TimetableEntryLookup(APIView):
             return Response({"multiple": True, "pk": entries.values()}, status=status.HTTP_200_OK)
         
 
+@api_view(["GET"])
+def public_entries(request, username):
+    try:
+        user = User.objects.get(username=username)
+        entries = TimetableEntry.objects.filter(user=user)
+        serialized = [
+            {
+                "day_of_week": entry.day_of_week,
+                "hour": entry.hour,
+                "content": entry.content,
+            }
+            for entry in entries
+        ]
+        return Response(serialized)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+    
+
 @login_required
-def home(request):
+def calendar(request):
     return render(request, "calendar.html", {"days": DAYS})
+
+
+def calendar_guest(request, user):
+    return render(request, "calendar.html", {"days": DAYS, "username": user, "is_guest": True})
+
 

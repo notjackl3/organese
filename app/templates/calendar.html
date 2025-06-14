@@ -27,11 +27,18 @@
                         data-day="{{ day }}" data-hour="{{ hour }}"
                         style="position: relative; height: 100px; overflow-y: hidden; cursor: pointer">
                         <p style="font-size: small;"></p>
+                        {% if is_guest %}
+                        <div class="overlay flex-column justify-content-center align-items-stretch w-100 p-3">
+                            <button class="btn btn-secondary btn-custom book" type="button">Book</button>
+                            <button class="btn btn-secondary btn-custom cancel" type="button">Cancel</button>
+                        </div>
+                        {% else %}
                         <div class="overlay flex-column justify-content-center align-items-stretch w-100 p-3">
                             <button class="btn btn-secondary btn-custom add" type="button">Add new</button>
                             <button class="btn btn-secondary btn-custom edit" type="button">Edit</button>
                             <button class="btn btn-secondary btn-custom delete" type="button">Delete</button>
                         </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
@@ -46,6 +53,13 @@
 {% endblock %}
 
 {% block scripts %}
-<script defer src="{% static 'app-timetable.js' %}"></script>
-<script defer src="{% static 'app-interactions.js' %}"></script>
+    {% if is_guest %}
+    <body data-username="{{ username }}">
+        <script defer src="{% static 'app-guests.js' %}"></script>
+    </body>
+    {% else %}
+        <script defer src="{% static 'app-setup.js' %}"></script>
+    {% endif %}
+    <script defer src="{% static 'app-interactions.js' %}"></script>
+    <script defer src="{% static 'app-timetable.js' %}"></script>
 {% endblock %}
