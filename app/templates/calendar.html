@@ -59,6 +59,8 @@
             <button type="button" class="btn-white-edges" id="copy-link-btn" data-username="{{ username }}">Copy Calendar Guest Link</button>
         </div>
     </div>
+    {% else %}
+    <span class="btn-white-edges target-name mt-3" id="username-display">Viewing {{ username }}'s Timetable</span>
     {% endif %}
 </div>
 {% endblock %}
@@ -72,7 +74,7 @@
     </body>
     {% else %}
         <body data-toggle="{% url 'update_settings' %}">
-            <script defer src="{% static 'app-setup.js' %}"></script>
+            <script defer src="{% static 'app-owner.js' %}"></script>
         </body>
     {% endif %}
 {% endblock %}

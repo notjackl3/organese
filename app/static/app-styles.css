@@ -92,7 +92,8 @@
     background-color: var(--extra-color);
 }
 
-.btn-white-edges.toggle:hover {
+.btn-white-edges.toggle:hover,
+.btn-white-edges.target-name:hover {
     background-color: inherit;
 }
 
