@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Timetable, TimetableEntry, BookingRequest
 
-# Register your models here.
+admin.site.register(Timetable)
+admin.site.register(TimetableEntry)
+admin.site.register(BookingRequest)

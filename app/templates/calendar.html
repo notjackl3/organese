@@ -6,7 +6,19 @@
 
 {% block content %}
 <div class="timetable-container">
-    <div class="container mt-5 mx-2" style="max-height: 500px; overflow-y: auto;">
+    {% if not is_guest %}
+    <div class="container mt-3">
+        <div class="d-flex align-items-top justify-content-center pt-3 gap-3">
+            <button type="button" class="btn-white-edges" id="timetable-btn" data-username="{{ username }}">Current Timetable: {{ timetable_name }} ({{ timetable_id }})</button>
+            <input type="text" id="timetable-name-input" class="form-control" placeholder="Enter timetable name" style="max-width: 300px; display: none;">
+            <button type="button" class="btn-white-edges" id="timetable-choose" style="display: none;" data-username="{{ username }}">Choose</button>
+            <button type="button" class="btn-white-edges" id="timetable-add" style="display: none;" data-username="{{ username }}">Add New</button>
+            <button type="button" class="btn-white-edges" id="timetable-delete" style="display: none;" data-username="{{ username }}">Delete</button>
+            <button type="button" class="btn-white-edges" id="timetable-cancel" style="display: none;" data-username="{{ username }}">Cancel</button>
+        </div>
+    </div>
+    {% endif %}
+    <div class="container mt-3 mx-2" style="max-height: 500px; overflow-y: auto;">
         <div class="d-flex" style="width: 100%; overflow-x: auto;">
             <!-- Sticky time column -->
             <div class="bg-light border border-1"
@@ -51,12 +63,12 @@
         <div class="d-flex align-items-top justify-content-center pt-3 gap-3">
             <div class="form-switch m-0 make-public btn-white-edges toggle">
                 <input class="form-check-input" type="checkbox" id="public-toggle" name="is_public"
-                    {% if user.settings.is_public %}checked{% endif %}>
+                    {% if is_public %}checked{% endif %}>
                 <div style="display: flex; justify-content: center; align-items: center;">
                     <label class="form-check-label ms-2" for="public-toggle">Make Public</label>
                 </div>
             </div>
-            <button type="button" class="btn-white-edges" id="copy-link-btn" data-username="{{ username }}">Copy Calendar Guest Link</button>
+            <button type="button" class="btn-white-edges" id="copy-link-btn" data-username="{{ username }}" data-timetable="{{ timetable_name }}">Copy Calendar Guest Link</button>
         </div>
     </div>
     {% else %}
@@ -66,15 +78,15 @@
 {% endblock %}
 
 {% block scripts %}
-<script defer src="{% static 'app-interactions.js' %}"></script>
-<script defer src="{% static 'app-timetable.js' %}"></script>
+<body data-timetable="{{ timetable_id }}">
+    <script defer src="{% static 'app-interactions.js' %}"></script>
+    <script defer src="{% static 'app-timetable.js' %}"></script>
+</body>
     {% if is_guest %}
-    <body data-username="{{ username }}">
+    <body data-timetable="{{ timetable_id }}">
         <script defer src="{% static 'app-guests.js' %}"></script>
     </body>
     {% else %}
-        <body data-toggle="{% url 'update_settings' %}">
-            <script defer src="{% static 'app-owner.js' %}"></script>
-        </body>
+        <script defer src="{% static 'app-owner.js' %}"></script>
     {% endif %}
 {% endblock %}
