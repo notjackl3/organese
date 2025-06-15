@@ -16,13 +16,13 @@ class CustomPasswordResetForm(forms.Form):
     )
 
     def get_users(self, identifier):
-        if '@' in identifier:
+        if "@" in identifier:
             return User.objects.filter(email__iexact=identifier, is_active=True)
         else:
             return User.objects.filter(username__iexact=identifier, is_active=True)
     
     def clean_identifier(self):
-        identifier = self.cleaned_data['identifier']
+        identifier = self.cleaned_data["identifier"]
         users = self.get_users(identifier)
 
         if not users.exists():
@@ -38,7 +38,7 @@ class CustomPasswordResetForm(forms.Form):
         identifier = self.cleaned_data["identifier"]
         user = self.get_users(identifier).first()
 
-        reset_form = PasswordResetForm({'email': user.email})
+        reset_form = PasswordResetForm({"email": user.email})
         if reset_form.is_valid():
             reset_form.save(**kwargs)
 

@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from rest_framework import viewsets, permissions
+from rest_framework import permissions
 from .models import Timetable, TimetableEntry, BookingRequest
 from .serializers import TimetableSerializer, TimetableEntrySerializer
 from rest_framework.views import APIView
@@ -8,23 +8,10 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
 
 
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
-
-class TimetableEntryViewSet(viewsets.ModelViewSet):
-    queryset = TimetableEntry.objects.all()
-    serializer_class = TimetableEntrySerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
 
 
 class TimetableEntryList(APIView):
@@ -32,6 +19,7 @@ class TimetableEntryList(APIView):
 
     # GET request to retrieve timetable data
     def get(self, request):
+        # get data from url query, search for the timetable, then retrieve entries of that timetable
         timetable_id = request.query_params.get('timetable_id')
         timetable = get_object_or_404(Timetable, id=timetable_id)
         entries = TimetableEntry.objects.filter(timetable=timetable)
@@ -40,9 +28,10 @@ class TimetableEntryList(APIView):
 
     # POST request to add new timetable data
     def post(self, request):
+        # use serializer to standardize data, get timetable_id from request data body, search for the timetable then save entry of that table
         serializer = TimetableEntrySerializer(data=request.data)
         if serializer.is_valid():
-            timetable_id = request.query_params.get('timetable_id')
+            timetable_id = request.data.get('timetable_id')
             timetable = get_object_or_404(Timetable, id=timetable_id)
             serializer.save(timetable=timetable)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -52,14 +41,7 @@ class TimetableEntryList(APIView):
 class TimetableEntryDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self, pk, user):
-        return get_object_or_404(TimetableEntry, pk=pk, timetable__user=user)
-
-    def get(self, request, pk):
-        entry = self.get_object(pk, request.user)
-        serializer = TimetableEntrySerializer(entry)
-        return Response(serializer.data)
-
+    # PUT request is for replacing data
     def put(self, request, pk):
         entry = self.get_object(pk, request.user)
         serializer = TimetableEntrySerializer(entry, data=request.data)
@@ -68,6 +50,7 @@ class TimetableEntryDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # PATCH request is for altering data
     def patch(self, request, pk):
         entry = self.get_object(pk, request.user)
         serializer = TimetableEntrySerializer(entry, data=request.data, partial=True)
@@ -77,16 +60,17 @@ class TimetableEntryDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        entry = self.get_object(pk, request.user)
+        entry = TimetableEntry.objects.get(id=pk)
         entry.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TimetableEntryLookup(APIView):
+    # get all data from request data body, then search for the table entry that has the matching timings and then return them
     def post(self, request):
         day = request.data.get('day_of_week')
         hour = request.data.get('hour')
-        timetable_id = request.query_params.get('timetable_id')
+        timetable_id = request.data.get('timetable_id')
         timetable = get_object_or_404(Timetable, id=timetable_id)
         try:
             entry = TimetableEntry.objects.get(
@@ -110,6 +94,7 @@ class TimetableGuestEntryList(APIView):
     # allow anyone to access using the guest link
     permission_classes = [AllowAny]
     def get(self, request):
+        # get timetable_id from query paraeter then retrieve all entries of that timetable
         try:
             timetable_id = request.query_params.get('timetable_id')
             timetable = get_object_or_404(Timetable, id=timetable_id)
@@ -126,11 +111,12 @@ class TimetableGuestEntryList(APIView):
     
 
 class TimetableList(APIView):
+    # get user_id from request data body then create a table. The name of the table will be included in request.data already, and it is serialized
     def post(self, request):
-        user_id = request.query_params.get("user_id")
+        user_id = request.data.get('user_id')
+        user = get_object_or_404(User, id=user_id)
         serializer = TimetableSerializer(data=request.data)
         if serializer.is_valid():
-            user = get_object_or_404(User, id=user_id)
             serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
