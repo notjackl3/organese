@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, permissions
 from .models import Timetable, TimetableEntry, BookingRequest
-from .serializers import TimetableEntrySerializer
+from .serializers import TimetableSerializer, TimetableEntrySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -124,6 +124,17 @@ class TimetableGuestEntryList(APIView):
         except User.DoesNotExist:
             return Response({"error": "User not found."}, status=404)
     
+
+class TimetableList(APIView):
+    def post(self, request):
+        user_id = request.query_params.get("user_id")
+        serializer = TimetableSerializer(data=request.data)
+        if serializer.is_valid():
+            user = get_object_or_404(User, id=user_id)
+            serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @login_required
 def home(request):

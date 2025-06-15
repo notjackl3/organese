@@ -78,7 +78,7 @@
 {% endblock %}
 
 {% block scripts %}
-<body data-timetable="{{ timetable_id }}">
+<body data-timetable="{{ timetable_id }}" data-user="{{ username }}" data-id="{{ request.user.id }}">
     <script defer src="{% static 'app-interactions.js' %}"></script>
     <script defer src="{% static 'app-timetable.js' %}"></script>
 </body>
