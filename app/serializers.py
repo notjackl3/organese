@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Timetable, TimetableEntry
+from .models import Timetable, TimetableEntry, BookingRequest
 
 
 class TimetableSerializer(serializers.ModelSerializer):
@@ -14,3 +14,10 @@ class TimetableEntrySerializer(serializers.ModelSerializer):
         model = TimetableEntry
         fields = ["id", "timetable", "day_of_week", "hour", "content", "created_at"]
         read_only_fields = ["id", "timetable", "created_at"]
+
+
+class BookingRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookingRequest
+        fields = ["id", "timetable", "guest_name", "guest_email", "status", "day_of_week", "hour", "content", "created_at"]
+        read_only_fields = ["id", "guest_name", "guest_email", "timetable", "created_at"]

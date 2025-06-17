@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from rest_framework import permissions
 from .models import Timetable, TimetableEntry, BookingRequest
-from .serializers import TimetableSerializer, TimetableEntrySerializer
+from .serializers import TimetableSerializer, TimetableEntrySerializer, BookingRequestSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -122,6 +122,19 @@ class TimetableList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class BookingRequestList(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = BookingRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            timetable_id = request.data.get('timetable_id')
+            timetable = get_object_or_404(Timetable, id=timetable_id)
+            serializer.save(timetable=timetable)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @login_required
 def home(request):
     username = User.objects.get(username=request.user.username)
@@ -175,3 +188,7 @@ def calendar_guest(request, username, timetable_name):
     })
 
 
+def booking(request, timetable_name):
+    timetable = Timetable.objects.get(name=timetable_name)
+    bookings = BookingRequest.objects.filter(timetable=timetable, status="pending")
+    return render(request, "bookings.html", {"bookings": bookings})

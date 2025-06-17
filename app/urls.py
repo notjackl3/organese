@@ -18,4 +18,7 @@ urlpatterns = [
     # update public permissions to the timetable
     path("update-settings/<int:id>", views.update_settings, name="update_settings"),
     path("table/", views.TimetableList.as_view(), name="create-table"),
+    # manage requests from guests
+    path("booking/create/", views.BookingRequestList.as_view(), name="booking-create"),
+    path("booking/<str:timetable_name>/", views.booking, name="booking"),
 ]
