@@ -6,36 +6,45 @@
 
 {% block content %}
 <div class="container bg-light mt-5 p-4 rounded shadow">
-  <h2 class="mb-4">Pending Booking Requests</h2>
+    <h2 class="mb-4">Pending Booking Requests</h2>
 
-  {% if bookings %}
-    <ul class="list-group">
-      {% for booking in bookings %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <strong>Guest:</strong> {{ booking.guest_name }}<br>
-            <strong>Timetable:</strong> {{ booking.timetable.name }}<br>
-            <strong>Message:</strong> {{ booking.content|default:"(No message)" }}
-          </div>
+    {% if bookings %}
+        <ul class="list-group">
+        {% for booking in bookings %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Time Booked:</strong> {{ booking.day_of_week }} {{ booking.hour|stringformat:"02d" }}:00<br>
+                <strong>Guest:</strong> {{ booking.guest_name }}<br>
+                {% if booking.guest_email %}
+                <strong>Email:</strong> {{ booking.guest_email }}<br>
+                {% endif %}
+                <strong>Timetable:</strong> {{ booking.timetable.name }}<br>
+                {% if booking.content %}
+                <strong>Message:</strong> {{ booking.content }}<br>
+                {% endif %}
+                <strong>Date Posted:</strong> {{ booking.created_at }}<br>
+            </div>
 
-          <div class="d-flex gap-2">
-            <form method="post" action="#">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success btn-sm">Accept</button>
-            </form>
-            <form method="post" action="#">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-            </form>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No pending booking requests.</p>
-  {% endif %}
+            <div class="d-flex gap-2">
+                <form method="post" action="#">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                </form>
+                <form method="post" action="#">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                </form>
+            </div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No pending booking requests.</p>
+    {% endif %}
 </div>
 {% endblock %}
-
+<body data-user="{{ username }}" data-id="{{ request.user.id }}">
+    <script defer src="{% static 'booking/interactions.js' %}"></script>
+</body>  
 {% block scripts %}
 {% endblock %}

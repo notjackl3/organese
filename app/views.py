@@ -130,7 +130,8 @@ class BookingRequestList(APIView):
         if serializer.is_valid():
             timetable_id = request.data.get('timetable_id')
             timetable = get_object_or_404(Timetable, id=timetable_id)
-            serializer.save(timetable=timetable)
+            user = timetable.user
+            serializer.save(owner=user, timetable=timetable)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -188,7 +189,9 @@ def calendar_guest(request, username, timetable_name):
     })
 
 
-def booking(request, timetable_name):
-    timetable = Timetable.objects.get(name=timetable_name)
-    bookings = BookingRequest.objects.filter(timetable=timetable, status="pending")
-    return render(request, "bookings.html", {"bookings": bookings})
+def booking(request, username):
+    user = User.objects.get(username=request.user.username)
+    bookings = BookingRequest.objects.filter(owner=user, status="pending")
+    return render(request, "bookings.html", {
+        "bookings": bookings,
+        "username": username})
