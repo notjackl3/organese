@@ -30,6 +30,7 @@ class TimetableEntryList(APIView):
     def post(self, request):
         # use serializer to standardize data, get timetable_id from request data body, search for the timetable then save entry of that table
         serializer = TimetableEntrySerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             timetable_id = request.data.get('timetable_id')
             timetable = get_object_or_404(Timetable, id=timetable_id)
@@ -126,12 +127,42 @@ class BookingRequestList(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        serializer = BookingRequestSerializer(data=request.data)
+        timetable_id = request.data.get("timetable_id")
+        timetable = get_object_or_404(Timetable, id=timetable_id)
+        user = timetable.user
+        serializer = BookingRequestSerializer(
+            data=request.data,
+            context={"timetable": timetable, "owner": user}
+        )
+        print("Data", request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class BookingEntryDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request):
+        booking_id = request.data.get('booking_id')
+        booking = BookingRequest.objects.get(id=booking_id)
+        booking.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class BookingEntryList(APIView):
+    permission_classes = [AllowAny]
+
+    # POST request to add new timetable data
+    def post(self, request):
+        serializer = TimetableEntrySerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             timetable_id = request.data.get('timetable_id')
             timetable = get_object_or_404(Timetable, id=timetable_id)
-            user = timetable.user
-            serializer.save(owner=user, timetable=timetable)
+            serializer.save(timetable=timetable)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -179,11 +210,10 @@ def update_settings(request, id):
 
 def calendar_guest(request, username, timetable_name):
     timetable = Timetable.objects.get(name=timetable_name)
-    timetable_id = timetable.id
     return render(request, "calendar.html", {
         "days": DAYS,
         "username": username,
-        "timetable_id": timetable_id,
+        "timetable_id": timetable.id,
         "timetable_name": timetable_name,
         "is_guest": True
     })

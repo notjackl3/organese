@@ -20,5 +20,7 @@ urlpatterns = [
     path("table/", views.TimetableList.as_view(), name="create-table"),
     # manage requests from guests
     path("booking/create/", views.BookingRequestList.as_view(), name="booking-create"),
+    path("booking/change/", views.BookingEntryDetail.as_view(), name="booking-change"),
+    path("booking/add/", views.BookingEntryList.as_view(), name="booking-add"),
     path("booking/<str:username>/", views.booking, name="booking"),
 ]

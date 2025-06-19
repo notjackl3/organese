@@ -38,9 +38,9 @@ class TimetableEntry(models.Model):
 class BookingRequest(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="booking")
     timetable = models.ForeignKey(Timetable, on_delete=models.CASCADE, related_name="booking_requests")
-    guest_name = models.CharField(max_length=100)
-    guest_email = models.EmailField()
-    status = models.CharField(max_length=20, default="pending")  
+    guest_name = models.CharField()
+    guest_email = models.EmailField(blank=True)
+    status = models.CharField(default="pending")  
     day_of_week = models.CharField(max_length=9, choices=[
         ("Monday", "Monday"),
         ("Tuesday", "Tuesday"),
