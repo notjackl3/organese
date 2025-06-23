@@ -26,27 +26,36 @@
     </div>
     {% endif %}
 
-    <div class="container mt-3 mx-2" style="max-height: 500px; overflow-y: auto;">
-        <div class="d-flex" style="width: 100%; overflow-x: auto;">
-            <!-- Sticky time column -->
-            <div class="bg-light border border-1"
-                 style="min-width: 150px; position: sticky; left: 0; z-index: 2; background-color: #f8f9fa;">
-                <h5 class="text-center py-3">time/day</h5>
-                {% for hour in 0|to:24 %}
-                <div class="bg-light p-2 text-center justify-content-center text-wrap" style="height: 100px;">{{ hour }}:00</div>
+    <div class="container mt-3 mx-2" style="width: 100%; overflow-x: auto; max-height: 500px; overflow-y: auto;">
+        <div style="display: flex; position: sticky; top: 0; z-index: 3;">
+            <div class="bg-light" style="flex: 0 0 150px;"></div>
+            <div id="header-scroll" style="flex: 1; display: flex; overflow-x: auto;">
+                {% for day in days %}
+                    <div class="bg-light border p-0 m-0" style="height: 100px; display:flex; flex-direction: column; justify-content: center; min-width: 175px; flex-shrink: 0;">
+                        <h5 class="text-center py-3">{{ day }}</h5>
+                    </div>
                 {% endfor %}
             </div>
-
+        </div>
+        <div class="d-flex" style="width: 100%;">
+            <!-- Sticky time column -->
+            <div class="bg-light border border-1"
+                 style="min-width: 150px; position: sticky; left: 0; z-index: 2; background-color: #f8f9fa; top: 50px">
+                <!-- <h5 class="text-center py-3">time/day</h5> -->
+                {% for hour in 0|to:24 %}
+                <div class="bg-light p-2 text-center justify-content-center text-wrap" style="height: 100px; display: flex; flex-direction: column;">{{ hour }}:00</div>
+                {% endfor %}
+            </div>
             <!-- This the column for each of the week days -->
-            <div class="d-flex" style="overflow-x: auto; white-space: nowrap; width: 100%; background-color:#e65976;">
+            <div id="content-scroll" class="d-flex" style="overflow-x: auto; white-space: nowrap; width: 100%; background-color:#e65976;">
                 {% for day in days %}
                 <div class="bg-light border border-1 p-0 m-0" style="min-width: 175px; flex-shrink: 0;">
-                    <h5 class="text-center py-3">{{ day }}</h5>
+                    <!-- <h5 class="text-center py-3">{{ day }}</h5> -->
                     {% for hour in 0|to:24 %}
                     <div class="bg-light p-2 text-start time-item text-wrap border-top hoverable"
                         data-day="{{ day }}" data-hour="{{ hour }}"
-                        style="position: relative; height: 100px; overflow-y: hidden; cursor: pointer">
-                        <p data-placeholder="Insert text here..." style="font-size: small;"></p>
+                        style="position: relative; height: 100px; max-width: 173px; width: 100%; overflow-y: auto; cursor: pointer; box-sizing: border-box;">
+                        <p data-placeholder="Insert text here..." style="font-size: medium; word-wrap: break-word"></p>
                         {% if is_guest %}
                         <div class="overlay flex-column justify-content-center align-items-stretch w-100 p-3">
                             <button class="btn btn-secondary btn-custom book" type="button">Book</button>

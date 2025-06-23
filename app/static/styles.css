@@ -26,6 +26,17 @@
     color: white !important;              /* Optional: change text color */
 }
 
+#header-scroll,
+#content-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#header-scroll::-webkit-scrollbar,
+#content-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
 .container::-webkit-scrollbar {
     width: 0px;
@@ -127,3 +138,6 @@
 .content:empty::before {
     content: attr(data-placeholder);
   }
+
+
+  

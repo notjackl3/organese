@@ -7,6 +7,24 @@ var curr_timetable_id = document.body.dataset.timetable;
 var curr_user_id = document.body.dataset.id;
 
 
+const headerScroll = document.getElementById('header-scroll');
+const contentScroll = document.getElementById('content-scroll');
+
+let isSyncingScroll = false;
+
+function syncScroll(source, target) {
+    if (isSyncingScroll) return;
+    console.log(headerScroll);
+    console.log(contentScroll);
+    isSyncingScroll = true;
+    target.scrollLeft = source.scrollLeft;
+    isSyncingScroll = false;
+}
+
+headerScroll.addEventListener('scroll', () => syncScroll(headerScroll, contentScroll));
+contentScroll.addEventListener('scroll', () => syncScroll(contentScroll, headerScroll));
+
+
 function getData(item, paragraph) {
     const day = item.getAttribute("data-day");
     const hour = parseInt(item.getAttribute("data-hour"));
