@@ -99,6 +99,30 @@ async function CREATETABLE(timetable_name, user_id) {
     }
 }
 
+async function CHANGETABLENAME(timetable_id, user_id, new_name) {
+    try {
+        const response = await fetch("/table/", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                id: timetable_id,
+                name: new_name,
+                is_public: false,
+                user_id: user_id
+            }),
+        })
+        if (!response.ok) throw new Error("Failed to save entry.");
+        data = await response.json()
+        console.log("Entry saved:", data);
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 
 async function BOOK(guest_name, guest_email, day, hour, content, timetable_id) {
     try {

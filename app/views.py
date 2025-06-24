@@ -9,6 +9,7 @@ from rest_framework import status, permissions
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny
+from .models import Timetable
 
 
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -122,6 +123,18 @@ class TimetableList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self, request):
+        timetable_id = request.data.get('id')
+        user_id = request.data.get('user_id')
+        user = get_object_or_404(User, id=user_id)
+        timetable_name = request.data.get('name')
+        changing_table = Timetable.objects.get(id=timetable_id)
+        serializer = TimetableSerializer(changing_table, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class BookingRequestList(APIView):
     permission_classes = [permissions.AllowAny]
@@ -169,14 +182,18 @@ class BookingEntryList(APIView):
 
 @login_required
 def home(request):
-    username = User.objects.get(username=request.user.username)
-    timetable = Timetable.objects.filter(user=username.id).first()
+    user = User.objects.get(username=request.user.username)
+    timetable = Timetable.objects.filter(user=user.id).first()
+    if not timetable:
+        timetable = Timetable.objects.create(
+            user=user,
+            name="Untitled Timetable")
     timetable_name = timetable.name
     timetable_id = timetable.id
     is_public = timetable.is_public
     return render(request, "calendar.html", {
         "days": DAYS,
-        "username": username,
+        "username": user,
         "timetable_id": timetable_id,
         "timetable_name": timetable_name,
         "is_public": is_public,

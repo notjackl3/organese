@@ -17,7 +17,9 @@
     <div class="container mt-3">
         <div class="d-flex align-items-top justify-content-center pt-3 gap-3">
             <button type="button" class="btn-white-edges" id="timetable-btn" data-username="{{ username }}">Current Timetable: {{ timetable_name }} ({{ timetable_id }})</button>
+            <button type="button" class="btn-white-edges" id="timetable-edit-btn" data-username="{{ username }}">Change Timetable Name</button>
             <input type="text" id="timetable-name-input" class="form-control" placeholder="Enter timetable name" style="max-width: 300px; display: none;">
+            <button type="button" class="btn-white-edges" id="timetable-change" style="display: none;" data-username="{{ username }}">Change</button>
             <button type="button" class="btn-white-edges" id="timetable-choose" style="display: none;" data-username="{{ username }}">Choose</button>
             <button type="button" class="btn-white-edges" id="timetable-add" style="display: none;" data-username="{{ username }}">Add New</button>
             <button type="button" class="btn-white-edges" id="timetable-delete" style="display: none;" data-username="{{ username }}">Delete</button>

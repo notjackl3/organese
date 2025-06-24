@@ -91,6 +91,7 @@ document.getElementById("copy-link-btn").addEventListener("click", function () {
 
 document.getElementById("timetable-btn").addEventListener("click", function () {
     document.getElementById("timetable-btn").style.display = "none";
+    document.getElementById("timetable-edit-btn").style.display = "none";
     document.getElementById("timetable-name-input").style.display = "block";
     document.getElementById("timetable-choose").style.display = "inline-block";
     document.getElementById("timetable-add").style.display = "inline-block";
@@ -101,11 +102,21 @@ document.getElementById("timetable-btn").addEventListener("click", function () {
 
 document.getElementById("timetable-cancel").addEventListener("click", function () {
 document.getElementById("timetable-btn").style.display = "block";
+document.getElementById("timetable-edit-btn").style.display = "block";
 document.getElementById("timetable-name-input").style.display = "none";
+document.getElementById("timetable-change").style.display = "none";
 document.getElementById("timetable-choose").style.display = "none";
 document.getElementById("timetable-add").style.display = "none";
 document.getElementById("timetable-delete").style.display = "none";
 document.getElementById("timetable-cancel").style.display = "none";
+});
+
+document.getElementById("timetable-edit-btn").addEventListener("click", async function () {
+    document.getElementById("timetable-edit-btn").style.display = "none";
+    document.getElementById("timetable-btn").style.display = "none";
+    document.getElementById("timetable-name-input").style.display = "block";
+    document.getElementById("timetable-change").style.display = "inline-block";
+    document.getElementById("timetable-cancel").style.display = "inline-block";
 });
 
 document.getElementById("timetable-choose").addEventListener("click", async function () {
@@ -113,8 +124,13 @@ document.getElementById("timetable-choose").addEventListener("click", async func
     window.location.href = `http://127.0.0.1:8000/calendar/${query}`;
 });
 
+document.getElementById("timetable-change").addEventListener("click", async function () {
+    query = document.getElementById("timetable-name-input").value;
+    await CHANGETABLENAME(timetableId, curr_user_id, query);
+    window.location.reload();
+});
+
 document.getElementById("timetable-add").addEventListener("click", function () {
     query = document.getElementById("timetable-name-input").value;
-    console.log(curr_user_id)
     CREATETABLE(query, curr_user_id);
 });
