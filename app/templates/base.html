@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">  
+    <link rel="stylesheet" href="{% static 'static-app/styles.css' %}">  
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %} 
@@ -51,7 +51,7 @@
     </nav>
 
     {% block content %}{% endblock %}
-    <script src="{% static 'utils.js' %}"></script>
+    <script src="{% static 'static-app/utils.js' %}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

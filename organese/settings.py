@@ -119,11 +119,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATICFILES_DIRS contians the static files that are not particularly tied to a single app, these are the extra locations that can contain static files
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# During deployment (e.g., collectstatic), STATIC_ROOT is useless during development
+# When you do collectstatic, everything should go under STATIC_ROOT. When you deploy an app, this STATIC_ROOT should be published, for example on S3, so that other services can reach
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
